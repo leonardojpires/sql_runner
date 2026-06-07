@@ -1,0 +1,23 @@
+{
+  "name": "run_sql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate:all": "ts-node ./scripts/run_migrations.ts all",
+    "migrate:one": "ts-node ./scripts/run_migrations.ts one",
+    "create:migration": "ts-node ./scripts/create_migration.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "mysql2": "^3.22.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1"
+  }
+}
