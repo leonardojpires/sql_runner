@@ -1,6 +1,7 @@
 import fs from "fs";
 import { pool } from "../database/pool.ts";
 import path from "path";
+import type { RowDataPacket } from "mysql2";
 
 const MIGRATIONS_FOLDER = "./database/migrations";
 
@@ -44,15 +45,29 @@ async function addMigrationToDatabase(file: any) {
   await pool.query(`INSERT INTO migrations (filename) VALUES (?)`, [filename]);
 }
 
+async function checkIfMigrationExists() {
+    const selectRanMigrations = `SELECT filename FROM migrations`;
+    const [rows] = await pool.query(selectRanMigrations);
+    const migrations = (rows as RowDataPacket[]).map(row => row.filename);
+
+    return migrations;
+}
+
 /* -- MAIN FUNCTIONS -- */
 export async function runAllMigrations() {
   await createMigrationsTable();
 
   try {
     const allSqlFiles = readMySQLFiles();
+    const migrations = await checkIfMigrationExists();
+
     if (!allSqlFiles) return;
 
     for (const file of allSqlFiles) {
+      for (const migration of migrations) {
+        if (file === migration) return;
+      }
+      
       const sql = fs.readFileSync(`${MIGRATIONS_FOLDER}/${file}`, "utf-8");
       console.log(`Running migration ${file}`);
       await pool.query(sql);
@@ -69,21 +84,27 @@ export async function runAllMigrations() {
 export async function runSpecificMigration(migration: string) {
   await createMigrationsTable();
 
-  const FILE = `${MIGRATIONS_FOLDER}/${migration}`;
-
+  const file = `${MIGRATIONS_FOLDER}/${migration}`;
+  
   try {
-    let isSqlFile = FILE.endsWith(".sql");
+    const isSqlFile = file.endsWith(".sql");
+    const ranMigrations = await checkIfMigrationExists();
+    
+    if (ranMigrations.includes(migration)) {
+      console.log(`Migration ${migration} has already been run.`);
+      return;
+    }
 
     if (!isSqlFile) {
       console.log("That file is not an SQL file.");
       return;
     }
 
-    const sql = fs.readFileSync(FILE, "utf-8");
-    console.log(`Running migration: ${FILE}`);
+    const sql = fs.readFileSync(file, "utf-8");
+    console.log(`Running migration: ${file}`);
     await pool.query(sql);
 
-    await addMigrationToDatabase(FILE);
+    await addMigrationToDatabase(file);
   } catch (err) {
     console.error("Error running this migration: ", err);
   }
