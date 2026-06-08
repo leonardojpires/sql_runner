@@ -10,7 +10,7 @@ async function verifyIfMigrationsTableExists(tableName: string = "migrations") {
                  WHERE TABLE_SCHEMA = DATABASE()
                     AND TABLE_TYPE = 'BASE TABLE'
                     AND TABLE_NAME = ?;
-                `;
+               `;
 
   const [rows] = await pool.query(sql, [tableName]);
 
@@ -31,15 +31,25 @@ async function createMigrationsTable() {
   }
 }
 
+function readMySQLFiles() {
+  const allSqlFiles = fs
+    .readdirSync(MIGRATIONS_FOLDER)
+    .filter((file) => file.endsWith(".sql"));
+
+  return allSqlFiles;
+}
+
+async function addMigrationToDatabase(file: any) {
+  const filename = path.basename(file);
+  await pool.query(`INSERT INTO migrations (filename) VALUES (?)`, [filename]);
+}
+
 /* -- MAIN FUNCTIONS -- */
 export async function runAllMigrations() {
   await createMigrationsTable();
 
   try {
-    const allSqlFiles = fs
-      .readdirSync(MIGRATIONS_FOLDER)
-      .filter((file) => file.endsWith(".sql"));
-
+    const allSqlFiles = readMySQLFiles();
     if (!allSqlFiles) return;
 
     for (const file of allSqlFiles) {
@@ -47,10 +57,7 @@ export async function runAllMigrations() {
       console.log(`Running migration ${file}`);
       await pool.query(sql);
 
-      const filename = path.basename(file);
-      await pool.query(`INSERT INTO migrations (filename) VALUES (?)`, [
-        filename,
-      ]);
+      await addMigrationToDatabase(file);
     }
 
     console.log("All migrations ran successfully!");
@@ -60,6 +67,8 @@ export async function runAllMigrations() {
 }
 
 export async function runSpecificMigration(migration: string) {
+  await createMigrationsTable();
+
   const FILE = `${MIGRATIONS_FOLDER}/${migration}`;
 
   try {
@@ -73,6 +82,8 @@ export async function runSpecificMigration(migration: string) {
     const sql = fs.readFileSync(FILE, "utf-8");
     console.log(`Running migration: ${FILE}`);
     await pool.query(sql);
+
+    await addMigrationToDatabase(FILE);
   } catch (err) {
     console.error("Error running this migration: ", err);
   }
