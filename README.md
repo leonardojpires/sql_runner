@@ -110,6 +110,7 @@ export const pool = mysql.createPool({
 });
 ```
 (make sure to configure the .env file correctly with your database information, follow .env.example structure)\
+
 5. Inside 'scripts/' folder, create 'create_migration.ts' and 'run_migrations.ts' file\
 6. Copy and paste the contents from both scripts and paste them into the new files you just created, respectively
 7. Add the following content to your package.json "scripts":
