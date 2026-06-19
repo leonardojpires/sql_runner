@@ -46,13 +46,13 @@ run_sql/
 
 ### Explaining Each File/Folder
 
-**database/**: This is where database configuration is stored.
-**migrations/**: Stores all migrations files.
-**pool.ts**: Database configuration file.
+**database/**: This is where database configuration is stored.\
+**migrations/**: Stores all migrations files.\
+**pool.ts**: Database configuration file.\
 
-**scripts/**: All database operation script files are stored here.
-**create_migration.ts**: Creates a new migration (essentially a .sql).
-**run_migration.ts**: This script has two function: one that runs all migrations and another that runs a specific migration.
+**scripts/**: All database operation script files are stored here.\
+**create_migration.ts**: Creates a new migration (essentially a .sql).\
+**run_migration.ts**: This script has two function: one that runs all migrations and another that runs a specific migration.\
 
 ## Migration System
 Whenever a migration is ran, the 'migrations' table in the database stores its name, and everytime you ran a migration, the system checks if the migration has already been ran based on its name.
