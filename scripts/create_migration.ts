@@ -39,6 +39,7 @@ async function main() {
     try {
         await createMigration(name);
         console.log(`Created migration: ${name}`);
+        process.exit(0);
     } catch(err) {
         console.error('Failed to create migration.', err);
     }

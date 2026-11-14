@@ -4,6 +4,7 @@ import path from "path";
 import type { RowDataPacket } from "mysql2";
 
 const MIGRATIONS_FOLDER = "./database/migrations";
+
 async function verifyIfMigrationsTableExists(tableName: string = "migrations") {
   const sql = `SELECT COUNT(*) AS table_exists
                  FROM information_schema.TABLES
@@ -26,8 +27,12 @@ async function createMigrationsTable() {
             ran_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
         )`;
 
-    await pool.query(sql);
-    console.log("'Migrations' table created successfuly");
+    try {
+      await pool.query(sql);
+      console.log("'Migrations' table created successfuly");
+    } catch(err: unknown) {
+      console.error(`Unexpected error: ${err}`);
+    }
   }
 }
 

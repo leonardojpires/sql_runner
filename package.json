@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate:all": "ts-node ./scripts/run_migrations.ts all",
-    "migrate:one": "ts-node ./scripts/run_migrations.ts one",
-    "create:migration": "ts-node ./scripts/create_migration.ts"
+    "migrate:all": "node ./scripts/run_migrations.ts all",
+    "migrate:one": "node ./scripts/run_migrations.ts one",
+    "create:migration": "node ./scripts/create_migration.ts"
   },
   "keywords": [],
   "author": "",
