@@ -4,7 +4,6 @@ import path from "path";
 import type { RowDataPacket } from "mysql2";
 
 const MIGRATIONS_FOLDER = "./database/migrations";
-
 async function verifyIfMigrationsTableExists(tableName: string = "migrations") {
   const sql = `SELECT COUNT(*) AS table_exists
                  FROM information_schema.TABLES
@@ -129,7 +128,7 @@ async function main() {
       );
   }
 
-  process.exit(1);
+  process.exit(0);
 }
 
 main().catch(console.error);
