@@ -32,7 +32,7 @@ async function main() {
     const [, , command, name] = process.argv;
 
     if (command !== 'create' || !name) {
-        console.error('Usage: npm run create:migration create <name)');
+        console.error('Usage: npm run create:migration create (name)');
         process.exit(1);
     }
 

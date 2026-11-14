@@ -1,6 +1,6 @@
 import fs from "fs";
-import { pool } from "../database/pool.ts";
 import path from "path";
+import { pool } from "../database/pool.ts";
 import type { RowDataPacket } from "mysql2";
 
 const MIGRATIONS_FOLDER = "./database/migrations";
